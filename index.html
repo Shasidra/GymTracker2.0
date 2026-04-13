@@ -1,0 +1,1703 @@
+
+<!DOCTYPE html><html w-tid="1">
+<head w-tid="3">
+  <base href simulated-href="https://gymtracker-app.com/" w-tid="5"/>
+<title>GymTracker</title>
+<meta property="og:title" content="GymTracker"/>
+
+  <meta charset="UTF-8" w-tid="7"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" w-tid="9"/>
+  <!--title>GymTracker</title-->
+  <style w-tid="13">
+    :root {
+      --bg-color: #f4f4f4;
+      --text-color: #333;
+      --card-bg: white;
+      --primary-color: #007AFF;
+      --success-color: #34C759;
+      --extra-color: #5856D6;
+      --delete-color: #FF3B30;
+      --border-color: #ddd;
+      --progress-bg: #e0e0e0;
+      --shadow-color: rgba(0,0,0,0.1);
+      --input-bg: white; /* Added for consistency */
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #1a1a1a;
+      --text-color: #ffffff;
+      --card-bg: #2c2c2c;
+      --primary-color: #0A84FF;
+      --success-color: #30D158;
+      --extra-color: #5E5CE6;
+      --delete-color: #FF453A;
+      --border-color: #3a3a3a;
+      --progress-bg: #3a3a3a;
+      --shadow-color: rgba(0,0,0,0.3);
+      --input-bg: #3a3a3a; /* Added for dark mode */
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .title-container {
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center items */
+      gap: 10px; /* Reduced gap */
+      margin-bottom: 20px;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    .app-logo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--primary-color);
+      font-size: 1.8em; /* Slightly smaller */
+    }
+    .muscle-group {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      transition: background-color 0.3s;
+    }
+    .muscle-group h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+    }
+    button {
+      background-color: var(--primary-color);
+      color: var(--card-bg); /* Changed to card-bg for better contrast */
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background-color 0.2s, transform 0.1s; /* Added transitions */
+    }
+    button:active {
+      transform: scale(0.98); /* Add press effect */
+    }
+    .delete-btn {
+      background-color: var(--delete-color);
+    }
+    input[type="text"], input[type="number"], select {
+      width: calc(100% - 22px); /* Keep padding in calc */
+      padding: 10px;
+      margin: 5px 0 10px 0; /* Added bottom margin */
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 16px;
+      background-color: var(--input-bg); /* Use variable */
+      color: var(--text-color);
+      box-sizing: border-box; /* Include padding in width */
+    }
+    .progress-bar {
+      background-color: var(--progress-bg);
+      border-radius: 5px;
+      height: 20px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .progress {
+      background-color: var(--success-color);
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.3s ease-in-out;
+    }
+    .progress-extra {
+      background-color: var(--extra-color);
+      height: 100%;
+    }
+    .goal-reached {
+      background-color: var(--success-color);
+      color: var(--card-bg);
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    .extra-sets {
+      color: var(--extra-color);
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .settings {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+    .settings h2 {
+      margin-top: 0;
+    }
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      /* Removed margin-top */
+      position: relative;
+    }
+    .theme-switch .switch {
+      position: relative;
+      display: inline-block;
+      width: 180px;
+      height: 40px;
+      margin: 0 8px;
+    }
+
+    .theme-switch .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .theme-switch .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #e5e5e5;
+      transition: .4s;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .theme-switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 32px;
+      width: 32px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .theme-switch input:checked + .slider {
+      background-color: #2c2c2c;
+    }
+
+    .theme-switch input:checked + .slider:before {
+      transform: translateX(140px);
+    }
+
+    .theme-switch .slider:after {
+      content: "DAYMODE";
+      position: absolute;
+      right: 50px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .theme-switch input:checked + .slider:after {
+      content: "NIGHTMODE";
+      color: white;
+      left: 50px;
+      right: auto;
+    }
+
+    /* Add sun/moon icons */
+    .theme-switch .slider .sun-icon {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      left: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-switch .slider .moon-icon {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-switch .slider .sun-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #333;
+    }
+
+    .theme-switch .slider .moon-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .settings .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .settings .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .settings .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .settings .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    .settings input:checked + .slider {
+      background-color: var(--success-color);
+    }
+
+    .settings input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap; /* Allow wrapping */
+      gap: 10px; /* Add gap for wrapped items */
+    }
+
+    .top-controls select {
+      width: auto; /* Annule la largeur 100% précédente */
+      flex-grow: 1; /* Allow select to grow */
+      min-width: 100px; /* Minimum width */
+    }
+    .theme-switch {
+        flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    @keyframes celebrate {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .celebrate {
+      animation: celebrate 0.5s ease-in-out;
+    }
+    .info-button {
+      background: var(--primary-color);
+      color: var(--card-bg);
+      width: 28px; /* Slightly larger */
+      height: 28px; /* Slightly larger */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px; /* Adjusted font size */
+      font-style: italic;
+      font-family: serif;
+      margin-left: 5px; /* Reduced margin */
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    .info-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      z-index: 1000;
+      max-width: 90%;
+      width: 400px;
+    }
+
+    .info-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .info-content {
+      margin: 15px 0;
+      line-height: 1.6;
+    }
+
+    .info-content ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+
+    .info-content li {
+      margin: 8px 0;
+    }
+    .tab-container {
+      display: flex;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: var(--card-bg);
+      box-shadow: 0 2px 5px var(--shadow-color);
+      flex-wrap: wrap; /* Allow tabs to wrap on small screens */
+    }
+
+    .tab {
+      flex: 1 1 auto; /* Allow tabs to grow and shrink, auto basis */
+      padding: 12px 8px; /* Adjusted padding */
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-color);
+      border: none;
+      background: none;
+      transition: background-color 0.3s;
+      font-size: 0.9em; /* Slightly smaller font */
+      min-width: 80px; /* Minimum width for each tab */
+    }
+
+    .tab.active {
+      background-color: var(--primary-color);
+      color: var(--card-bg);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .chart-container {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+
+    .chart-title {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    .steps-container {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .steps-circle {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 20px 0;
+    }
+
+    .steps-ring {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .steps-ring-bg {
+      fill: none;
+      stroke: var(--progress-bg);
+      stroke-width: 8;
+    }
+
+    .steps-ring-progress {
+      fill: none;
+      stroke: var(--primary-color);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.5s ease-in-out;
+    }
+
+    .steps-count {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    #stepsNumber {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .steps-goal {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .steps-goal-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    #stepsGoalInput {
+      width: 120px;
+    }
+
+    /* Metabolism Calculator Styles */
+    .metabolism-calculator {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+    .metabolism-calculator h2, .metabolism-calculator h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    .metabolism-calculator label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .metabolism-calculator input[type="number"],
+    .metabolism-calculator select {
+      margin-bottom: 15px; /* Increase bottom margin */
+    }
+    .metabolism-calculator button {
+        display: block; /* Make button take full width */
+        width: 100%;
+        margin: 15px 0 0 0; /* Adjust margin */
+    }
+    .result-display {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: var(--bg-color); /* Use bg color for contrast */
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .result-display span {
+        color: var(--success-color); /* Highlight the number */
+    }
+    #tdeeSection {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    .goal-options {
+        display: flex;
+        justify-content: space-around;
+        margin: 15px 0;
+    }
+    .goal-options button {
+        width: auto; /* Override block width */
+        flex: 1;
+        margin: 0 5px;
+        background-color: var(--progress-bg); /* Default style */
+        color: var(--text-color);
+    }
+     .goal-options button.selected {
+        background-color: var(--primary-color);
+        color: var(--card-bg);
+     }
+
+  </style>
+</head>
+<body w-tid="15">
+  <div class="container" w-tid="17">
+    <div class="title-container" w-tid="19">
+      <img src="GymTrackerLogo.png" alt="GymT" style="height: 30px; margin-right: 8px;">
+      <h1 w-tid="23">GymTracker</h1>
+      <div class="info-button" onclick="showInfo()" w-tid="25">i</div>
+    </div>
+    <div class="tab-container" w-tid="27">
+      <button class="tab active" onclick="switchTab('tracking')" id="trackingTab" w-tid="29"></button>
+      <button class="tab" onclick="switchTab('stats')" id="statsTab" w-tid="31"></button>
+      <button class="tab" onclick="switchTab('steps')" id="stepsTab" w-tid="33"></button>
+      <button class="tab" onclick="switchTab('metabolism')" id="metabolismTab" w-tid="35"></button> <!-- New Tab -->
+    </div>
+    <div id="trackingContent" class="tab-content active" w-tid="37">
+      <!-- ... existing tracking content ... -->
+       <div class="top-controls" w-tid="39">
+        <select id="languageSelect" onchange="changeLanguage()" w-tid="41">
+          <option value="fr" w-tid="43">Français</option>
+          <option value="en" w-tid="45">English</option>
+          <option value="de" w-tid="47">Deutsch</option>
+          <option value="zh" w-tid="49">中文</option>
+          <option value="es" w-tid="51">Español</option>
+          <option value="ar" w-tid="53">العربية</option>
+          <option value="ja" w-tid="55">日本語</option>
+        </select>
+        <div class="theme-switch" w-tid="57">
+          <label class="switch" w-tid="59">
+            <input type="checkbox" id="themeToggle" onchange="toggleTheme()" w-tid="61"/>
+            <span class="slider" w-tid="63">
+              <span class="sun-icon" w-tid="65">
+                <svg viewbox="0 0 24 24" w-tid="67">
+                  <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z M12 1v2 M12 21v2 M4.22 4.22l1.42 1.42 M18.36 18.36l1.42 1.42 M1 12h2 M21 12h2 M4.22 19.78l1.42-1.42 M18.36 5.64l1.42-1.42" w-tid="69"/>
+                </svg>
+              </span>
+              <span class="moon-icon" w-tid="71">
+                <svg viewbox="0 0 24 24" w-tid="73">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" w-tid="75"/>
+                </svg>
+              </span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div id="muscle-groups" w-tid="77"></div>
+      <button onclick="addMuscleGroup()" id="addGroupBtn" w-tid="79">Ajouter un groupe musculaire</button>
+      <button onclick="resetAllCounts()" id="resetAllBtn" w-tid="81">Réinitialiser toutes les séries</button>
+      <div class="settings" w-tid="83">
+        <h2 id="settingsTitle" w-tid="85">Paramètres</h2>
+        <label class="switch" w-tid="87">
+          <input type="checkbox" id="autoResetToggle" onchange="toggleAutoReset()" w-tid="89"/>
+          <span class="slider" w-tid="91"></span>
+        </label>
+        <span id="autoResetLabel" w-tid="93">Réinitialisation automatique (tous les 7 jours)</span>
+      </div>
+    </div>
+    <div id="statsContent" class="tab-content" w-tid="95">
+      <!-- ... existing stats content ... -->
+        <h2 class="chart-title" id="muscleProgressTitle" w-tid="97"></h2>
+      <div class="chart-container" w-tid="99">
+        <canvas id="progressChart" w-tid="101"></canvas>
+      </div>
+      <h2 class="chart-title" id="stepsProgressTitle" w-tid="103"></h2>
+      <div class="chart-container" w-tid="105">
+        <canvas id="stepsChart" w-tid="107"></canvas>
+      </div>
+    </div>
+    <div id="stepsContent" class="tab-content" w-tid="109">
+      <!-- ... existing steps content ... -->
+        <div class="steps-container" w-tid="111">
+        <div class="steps-circle" w-tid="113">
+          <svg class="steps-ring" viewbox="0 0 100 100" w-tid="115">
+            <circle class="steps-ring-bg" cx="50" cy="50" r="45" w-tid="117"/>
+            <circle class="steps-ring-progress" cx="50" cy="50" r="45" w-tid="119"/>
+          </svg>
+          <div class="steps-count" w-tid="121">
+            <div id="stepsNumber" w-tid="123">0</div>
+            <div id="stepsLabel" w-tid="125"></div>
+          </div>
+        </div>
+        <div class="steps-goal" w-tid="127">
+          <span id="stepsGoalLabel" w-tid="129"></span>
+          <div class="steps-goal-input" w-tid="131">
+            <input type="number" id="stepsGoalInput" min="1" step="1" w-tid="133"/>
+            <button onclick="updateStepsGoal()" id="updateStepsGoalBtn" w-tid="135"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- New Metabolism Tab Content -->
+    <div id="metabolismContent" class="tab-content" w-tid="137">
+        <div class="metabolism-calculator" w-tid="139">
+            <h2 id="metabolismTitle" w-tid="141"></h2>
+
+            <!-- Step 1: BMR Calculation -->
+            <h3 id="bmrCalcTitle" w-tid="143"></h3>
+            <label for="gender" id="genderLabel" w-tid="145"></label>
+            <select id="gender" w-tid="147">
+                <option value="male" id="maleOption" w-tid="149"></option>
+                <option value="female" id="femaleOption" w-tid="151"></option>
+            </select>
+
+            <label for="weight" id="weightLabel" w-tid="153"></label>
+            <input type="number" id="weight" placeholder="kg" w-tid="155"/>
+
+            <label for="height" id="heightLabel" w-tid="157"></label>
+            <input type="number" id="height" placeholder="cm" w-tid="159"/>
+
+            <label for="age" id="ageLabel" w-tid="161"></label>
+            <input type="number" id="age" placeholder="years" w-tid="163"/>
+
+            <button onclick="calculateBMR()" id="calculateBMRBtn" w-tid="165"></button>
+            <div id="bmrResult" class="result-display" style="display: none;" w-tid="167"></div>
+
+            <!-- Step 2: TDEE Calculation -->
+            <div id="tdeeSection" style="display: none;" w-tid="169">
+                <h3 id="tdeeCalcTitle" w-tid="171"></h3>
+
+                <label for="activityLevel" id="activityLevelLabel" w-tid="173"></label>
+                <select id="activityLevel" w-tid="175">
+                    <option value="1.2" id="sedentaryOption" w-tid="177"></option>
+                    <option value="1.375" id="lightlyActiveOption" w-tid="179"></option>
+                    <option value="1.55" id="moderatelyActiveOption" w-tid="181"></option>
+                    <option value="1.725" id="veryActiveOption" w-tid="183"></option>
+                    <option value="1.9" id="extraActiveOption" w-tid="185"></option>
+                </select>
+
+                <label id="goalLabel" w-tid="187"></label>
+                <div class="goal-options" w-tid="189">
+                    <button id="loseWeightBtn" data-goal="lose" onclick="selectGoal(this)" w-tid="191"></button>
+                    <button id="maintainWeightBtn" data-goal="maintain" onclick="selectGoal(this)" class="selected" w-tid="193"></button>
+                    <button id="gainWeightBtn" data-goal="gain" onclick="selectGoal(this)" w-tid="195"></button>
+                </div>
+
+                <button onclick="calculateTDEE()" id="calculateTDEEBtn" w-tid="197"></button>
+                <div id="tdeeResult" class="result-display" style="display: none;" w-tid="199"></div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" crossOrigin="anonymous" w-tid="201"></script>
+  <script w-tid="203">
+    let muscleGroups = [];
+    let autoResetEnabled = false;
+    let lastResetDate = new Date().toISOString().split('T')[0];
+    let currentLanguage = 'fr';
+    let isDarkMode = false;
+    let weeklyWorkoutStats = {};
+    let dailySteps = {};
+    let weeklySteps = {};
+    let stepsCount = 0;
+    let stepsGoal = 10000;
+    let currentDayKey = new Date().toISOString().split('T')[0];
+    let calculatedBMR = null; // To store BMR result
+    let selectedGoal = 'maintain'; // Default goal
+
+    const translations = {
+      fr: {
+        title: "GymTracker",
+        addGroup: "Ajouter un groupe musculaire",
+        resetAll: "Réinitialiser toutes les séries",
+        settings: "Paramètres",
+        autoReset: "Réinitialisation automatique (tous les 7 jours)",
+        sets: "Séries",
+        editGoal: "Modifier l'objectif",
+        editName: "Modifier le nom",
+        delete: "Supprimer",
+        reset: "Réinitialiser",
+        goalReached: "Objectif atteint !",
+        enterMuscleGroup: "Nom du groupe musculaire:",
+        enterWeeklyGoal: "Objectif hebdomadaire pour {0} (nombre de séries):",
+        enterNewGoal: "Nouvel objectif hebdomadaire pour {0} (nombre de séries):",
+        enterNewName: "Nouveau nom pour le groupe musculaire:",
+        confirmDelete: "Êtes-vous sûr de vouloir supprimer ce groupe musculaire ?",
+        trackingTab: "Suivi",
+        statsTab: "Statistiques",
+        stepsTab: "Nombre de pas",
+        steps: "pas",
+        stepsGoal: "Objectif quotidien",
+        updateGoal: "Modifier",
+        sensorNotAvailable: "Le capteur de pas n'est pas disponible sur votre appareil ou le navigateur.",
+        sensorPermissionDenied: "Veuillez autoriser l'accès aux capteurs de mouvement (accéléromètre).",
+        muscleProgressTitle: "Progression des Groupes Musculaires (Séries/Semaine)",
+        stepsProgressTitle: "Progression des Pas (Pas/Jour)",
+        stepsWeeklyProgressTitle: "Progression des Pas (Pas/Semaine)",
+        metabolismTab: "Métabolisme",
+        metabolismTitle: "Calculateur Métabolique",
+        bmrCalcTitle: "1. Calcul du Métabolisme de Base (BMR)",
+        genderLabel: "Sexe :",
+        maleOption: "Homme",
+        femaleOption: "Femme",
+        weightLabel: "Poids (kg) :",
+        heightLabel: "Taille (cm) :",
+        ageLabel: "Âge :",
+        calculateBMRBtn: "Calculer BMR",
+        bmrResultText: "Votre BMR est de {0} calories.",
+        tdeeCalcTitle: "2. Calcul du Dépense Énergétique Totale (TDEE)",
+        activityLevelLabel: "Niveau d'activité :",
+        sedentaryOption: "Sédentaire",
+        lightlyActiveOption: "Légèrement actif",
+        moderatelyActiveOption: "Moyennement actif",
+        veryActiveOption: "Très actif",
+        extraActiveOption: "Extrêmement actif",
+        goalLabel: "Objectif :",
+        loseWeightBtn: "Perdre du poids",
+        maintainWeightBtn: "Maintenir le poids",
+        gainWeightBtn: "Gagner du poids",
+        calculateTDEEBtn: "Calculer TDEE",
+        tdeeResultText: "Votre TDEE est de {0} calories.",
+      },
+      en: {
+        title: "GymTracker",
+        addGroup: "Add Muscle Group",
+        resetAll: "Reset All Sets",
+        settings: "Settings",
+        autoReset: "Automatic Reset (every 7 days)",
+        sets: "Sets",
+        editGoal: "Edit Goal",
+        editName: "Edit Name",
+        delete: "Delete",
+        reset: "Reset",
+        goalReached: "Goal Reached!",
+        enterMuscleGroup: "Muscle group name:",
+        enterWeeklyGoal: "Weekly goal for {0} (number of sets):",
+        enterNewGoal: "New weekly goal for {0} (number of sets):",
+        enterNewName: "New name for the muscle group:",
+        confirmDelete: "Are you sure you want to delete this muscle group?",
+        trackingTab: "Tracking",
+        statsTab: "Statistics",
+        stepsTab: "Steps",
+        steps: "steps",
+        stepsGoal: "Daily goal",
+        updateGoal: "Update",
+        sensorNotAvailable: "The step sensor is not available on your device or browser.",
+        sensorPermissionDenied: "Please allow access to motion sensors (accelerometer).",
+        muscleProgressTitle: "Muscle Group Progression (Sets/Week)",
+        stepsProgressTitle: "Steps Progression (Steps/Day)",
+        stepsWeeklyProgressTitle: "Steps Progression (Steps/Week)",
+        metabolismTab: "Metabolism",
+        metabolismTitle: "Metabolism Calculator",
+        bmrCalcTitle: "1. Calculate Basal Metabolic Rate (BMR)",
+        genderLabel: "Gender:",
+        maleOption: "Male",
+        femaleOption: "Female",
+        weightLabel: "Weight (kg):",
+        heightLabel: "Height (cm):",
+        ageLabel: "Age:",
+        calculateBMRBtn: "Calculate BMR",
+        bmrResultText: "Your BMR is {0} calories.",
+        tdeeCalcTitle: "2. Calculate Total Daily Energy Expenditure (TDEE)",
+        activityLevelLabel: "Activity level:",
+        sedentaryOption: "Sedentary",
+        lightlyActiveOption: "Lightly active",
+        moderatelyActiveOption: "Moderately active",
+        veryActiveOption: "Very active",
+        extraActiveOption: "Extra active",
+        goalLabel: "Goal:",
+        loseWeightBtn: "Lose weight",
+        maintainWeightBtn: "Maintain weight",
+        gainWeightBtn: "Gain weight",
+        calculateTDEEBtn: "Calculate TDEE",
+        tdeeResultText: "Your TDEE is {0} calories.",
+      },
+      // Add other languages
+    };
+
+    function changeLanguage() {
+      currentLanguage = document.getElementById('languageSelect').value;
+      localStorage.setItem('language', currentLanguage);
+      updateUILanguage();
+      if (document.getElementById('statsContent').classList.contains('active')) {
+        updateChartTitles();
+        updateStepsChart();
+      }
+      if (document.getElementById('stepsContent').classList.contains('active')) {
+        updateStepsDisplay();
+      }
+      if (document.getElementById('metabolismContent').classList.contains('active')) {
+        updateMetabolismUI();
+      }
+    }
+
+    function updateUILanguage() {
+      document.title = translations[currentLanguage].title;
+      document.querySelector('h1').textContent = translations[currentLanguage].title;
+      document.getElementById('addGroupBtn').textContent = translations[currentLanguage].addGroup;
+      document.getElementById('resetAllBtn').textContent = translations[currentLanguage].resetAll;
+      document.getElementById('settingsTitle').textContent = translations[currentLanguage].settings;
+      document.getElementById('autoResetLabel').textContent = translations[currentLanguage].autoReset;
+      document.getElementById('trackingTab').textContent = translations[currentLanguage].trackingTab;
+      document.getElementById('statsTab').textContent = translations[currentLanguage].statsTab;
+      document.getElementById('stepsTab').textContent = translations[currentLanguage].stepsTab;
+      document.getElementById('metabolismTab').textContent = translations[currentLanguage].metabolismTab;
+      document.getElementById('updateStepsGoalBtn').textContent = translations[currentLanguage].updateGoal;
+      renderMuscleGroups();
+      updateChartTitles();
+      updateMetabolismUI();
+    }
+
+    function updateMetabolismUI() {
+      document.getElementById('metabolismTitle').textContent = translations[currentLanguage].metabolismTitle;
+      document.getElementById('bmrCalcTitle').textContent = translations[currentLanguage].bmrCalcTitle;
+      document.getElementById('genderLabel').textContent = translations[currentLanguage].genderLabel;
+      document.getElementById('maleOption').textContent = translations[currentLanguage].maleOption;
+      document.getElementById('femaleOption').textContent = translations[currentLanguage].femaleOption;
+      document.getElementById('weightLabel').textContent = translations[currentLanguage].weightLabel;
+      document.getElementById('heightLabel').textContent = translations[currentLanguage].heightLabel;
+      document.getElementById('ageLabel').textContent = translations[currentLanguage].ageLabel;
+      document.getElementById('calculateBMRBtn').textContent = translations[currentLanguage].calculateBMRBtn;
+      document.getElementById('tdeeCalcTitle').textContent = translations[currentLanguage].tdeeCalcTitle;
+      document.getElementById('activityLevelLabel').textContent = translations[currentLanguage].activityLevelLabel;
+      document.getElementById('sedentaryOption').textContent = translations[currentLanguage].sedentaryOption;
+      document.getElementById('lightlyActiveOption').textContent = translations[currentLanguage].lightlyActiveOption;
+      document.getElementById('moderatelyActiveOption').textContent = translations[currentLanguage].moderatelyActiveOption;
+      document.getElementById('veryActiveOption').textContent = translations[currentLanguage].veryActiveOption;
+      document.getElementById('extraActiveOption').textContent = translations[currentLanguage].extraActiveOption;
+      document.getElementById('goalLabel').textContent = translations[currentLanguage].goalLabel;
+      document.getElementById('loseWeightBtn').textContent = translations[currentLanguage].loseWeightBtn;
+      document.getElementById('maintainWeightBtn').textContent = translations[currentLanguage].maintainWeightBtn;
+      document.getElementById('gainWeightBtn').textContent = translations[currentLanguage].gainWeightBtn;
+      document.getElementById('calculateTDEEBtn').textContent = translations[currentLanguage].calculateTDEEBtn;
+    }
+
+    function addMuscleGroup() {
+        const suggestions = muscleSuggestions[currentLanguage] || muscleSuggestions.fr;
+        
+        // Create custom modal dialog
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            z-index: 1000;
+            max-width: 90%;
+            width: 400px;
+        `;
+
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        `;
+
+        // Create content
+        modal.innerHTML = `
+            <h3 style="margin-top: 0; color: var(--primary-color);">${translations[currentLanguage].enterMuscleGroup}</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0;">
+                ${suggestions.map(muscle => `
+                    <button
+                        style="
+                            padding: 10px;
+                            margin: 0;
+                            background: var(--card-bg);
+                            border: 1px solid var(--border-color);
+                            border-radius: 5px;
+                            cursor: pointer;
+                            color: var(--text-color);
+                        "
+                        class="muscle-suggestion"
+                        data-muscle="${muscle}"
+                    >${muscle}</button>
+                `).join('')}
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                <button onclick="this.closest('.modal-container').remove()" style="background: var(--delete-color);">Annuler</button>
+            </div>
+        `;
+
+        const container = document.createElement('div');
+        container.className = 'modal-container';
+        container.appendChild(overlay);
+        container.appendChild(modal);
+
+        document.body.appendChild(container);
+
+        // Add click handlers for suggestions
+        modal.querySelectorAll('.muscle-suggestion').forEach(button => {
+            button.addEventListener('click', () => {
+                const selectedMuscle = button.dataset.muscle;
+                container.remove();
+                
+                const weeklyGoal = parseInt(prompt(translations[currentLanguage].enterWeeklyGoal.replace('{0}', selectedMuscle)));
+                if (!isNaN(weeklyGoal)) {
+                    const muscleGroup = { name: selectedMuscle, count: 0, weeklyGoal: weeklyGoal };
+                    muscleGroups.push(muscleGroup);
+                    saveMuscleGroups();
+                    renderMuscleGroups();
+                }
+            });
+
+            // Add hover effect
+            button.addEventListener('mouseover', () => {
+                button.style.background = 'var(--primary-color)';
+                button.style.color = 'var(--card-bg)';
+            });
+            button.addEventListener('mouseout', () => {
+                button.style.background = 'var(--card-bg)';
+                button.style.color = 'var(--text-color)';
+            });
+        });
+    }
+
+    function incrementCount(index) {
+      muscleGroups[index].count++;
+      if (muscleGroups[index].count === muscleGroups[index].weeklyGoal) {
+        celebrateGoalReached(index);
+      }
+      saveMuscleGroups();
+      renderMuscleGroups();
+      if (document.getElementById('statsContent').classList.contains('active')) {
+        updateWorkoutChart();
+      }
+    }
+
+    function decrementCount(index) {
+      if (muscleGroups[index].count > 0) {
+        muscleGroups[index].count--;
+        saveMuscleGroups();
+        renderMuscleGroups();
+        if (document.getElementById('statsContent').classList.contains('active')) {
+          updateWorkoutChart();
+        }
+      }
+    }
+
+    function editGoal(index) {
+      const newGoal = parseInt(prompt(translations[currentLanguage].enterNewGoal.replace('{0}', muscleGroups[index].name)));
+      if (!isNaN(newGoal)) {
+        muscleGroups[index].weeklyGoal = newGoal;
+        saveMuscleGroups();
+        renderMuscleGroups();
+      }
+    }
+
+    function editName(index) {
+      const newName = prompt(translations[currentLanguage].enterNewName, muscleGroups[index].name);
+      if (newName) {
+        muscleGroups[index].name = newName;
+        saveMuscleGroups();
+        renderMuscleGroups();
+      }
+    }
+
+    function deleteMuscleGroup(index) {
+      if (confirm(translations[currentLanguage].confirmDelete)) {
+        muscleGroups.splice(index, 1);
+        saveMuscleGroups();
+        renderMuscleGroups();
+      }
+    }
+
+    function celebrateGoalReached(index) {
+      const muscleGroupElement = document.querySelectorAll('.muscle-group')[index];
+      muscleGroupElement.classList.add('celebrate');
+      
+      setTimeout(() => {
+        muscleGroupElement.classList.remove('celebrate');
+      }, 500);
+    }
+
+    function resetCount(index) {
+      muscleGroups[index].count = 0;
+      saveMuscleGroups();
+      renderMuscleGroups();
+    }
+
+    function resetAllCounts() {
+      muscleGroups.forEach(group => group.count = 0);
+      lastResetDate = new Date().toISOString().split('T')[0];
+      saveMuscleGroups();
+      renderMuscleGroups();
+      if (document.getElementById('statsContent').classList.contains('active')) {
+        updateWorkoutChart();
+      }
+    }
+
+    function toggleAutoReset() {
+      autoResetEnabled = document.getElementById('autoResetToggle').checked;
+      localStorage.setItem('autoResetEnabled', autoResetEnabled);
+    }
+
+    function toggleTheme() {
+      isDarkMode = document.getElementById('themeToggle').checked;
+      document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+      localStorage.setItem('darkMode', isDarkMode);
+
+      // Update the charts if we're on the stats tab
+      if (document.getElementById('statsContent').classList.contains('active')) {
+        updateWorkoutChart();
+        updateStepsChart();
+      }
+    }
+
+    function checkAutoReset() {
+      const today = new Date().toISOString().split('T')[0];
+      const daysSinceReset = (new Date(today) - new Date(lastResetDate)) / (1000 * 60 * 60 * 24);
+      if (autoResetEnabled && daysSinceReset >= 7) {
+        resetAllCounts();
+      }
+    }
+
+    function saveMuscleGroups() {
+      localStorage.setItem('muscleGroups', JSON.stringify(muscleGroups));
+      localStorage.setItem('lastResetDate', lastResetDate);
+      localStorage.setItem('weeklyWorkoutStats', JSON.stringify(weeklyWorkoutStats)); 
+    }
+
+    function saveStepsData() {
+        localStorage.setItem('dailySteps', JSON.stringify(dailySteps));
+        localStorage.setItem('weeklySteps', JSON.stringify(weeklySteps));
+        localStorage.setItem('stepsCount', stepsCount.toString()); 
+        localStorage.setItem('stepsGoal', stepsGoal.toString());
+    }
+
+    function loadData() { 
+      const savedMuscleGroups = localStorage.getItem('muscleGroups');
+      if (savedMuscleGroups) {
+        muscleGroups = JSON.parse(savedMuscleGroups);
+      }
+      lastResetDate = localStorage.getItem('lastResetDate') || new Date().toISOString().split('T')[0];
+      autoResetEnabled = localStorage.getItem('autoResetEnabled') === 'true';
+      document.getElementById('autoResetToggle').checked = autoResetEnabled;
+
+      currentLanguage = localStorage.getItem('language') || 'fr';
+      document.getElementById('languageSelect').value = currentLanguage;
+
+      isDarkMode = localStorage.getItem('darkMode') === 'true';
+      document.getElementById('themeToggle').checked = isDarkMode;
+      document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+
+      const savedWorkoutStats = localStorage.getItem('weeklyWorkoutStats');
+      if (savedWorkoutStats) {
+        weeklyWorkoutStats = JSON.parse(savedWorkoutStats);
+      }
+
+      stepsCount = parseInt(localStorage.getItem('stepsCount') || '0');
+      stepsGoal = parseInt(localStorage.getItem('stepsGoal') || '10000');
+      const savedDailySteps = localStorage.getItem('dailySteps');
+       if (savedDailySteps) {
+         dailySteps = JSON.parse(savedDailySteps);
+       }
+       const savedWeeklySteps = localStorage.getItem('weeklySteps');
+        if (savedWeeklySteps) {
+         weeklySteps = JSON.parse(savedWeeklySteps);
+        }
+
+       currentDayKey = new Date().toISOString().split('T')[0]; 
+       if (!dailySteps[currentDayKey]) {
+           dailySteps[currentDayKey] = stepsCount;
+       } else {
+           stepsCount = dailySteps[currentDayKey];
+       }
+       saveStepsData(); 
+    }
+
+    function renderMuscleGroups() {
+      const muscleGroupsContainer = document.getElementById('muscle-groups');
+      muscleGroupsContainer.innerHTML = '';
+      muscleGroups.forEach((muscleGroup, index) => {
+        const muscleGroupElement = document.createElement('div');
+        muscleGroupElement.className = 'muscle-group';
+        const progress = Math.min((muscleGroup.count / muscleGroup.weeklyGoal) * 100, 100);
+        const extraProgress = Math.max(((muscleGroup.count - muscleGroup.weeklyGoal) / muscleGroup.weeklyGoal) * 100, 0);
+        const goalReached = muscleGroup.count >= muscleGroup.weeklyGoal;
+        const extraSets = Math.max(muscleGroup.count - muscleGroup.weeklyGoal, 0);
+        muscleGroupElement.innerHTML = `
+          <h3>${muscleGroup.name}</h3>
+          <p>${translations[currentLanguage].sets}: ${muscleGroup.count} / ${muscleGroup.weeklyGoal}
+             ${extraSets > 0 ? `<span class="extra-sets">(+${extraSets})</span>` : ''}
+          </p>
+          <div class="progress-bar">
+            <div class="progress" style="width: ${progress}%;"></div>
+            ${extraProgress > 0 ? `<div class="progress-extra" style="width: ${extraProgress}%;"></div>` : ''}
+          </div>
+          <button onclick="decrementCount(${index})">-</button>
+          <button onclick="incrementCount(${index})">+</button>
+          <button onclick="editGoal(${index})">${translations[currentLanguage].editGoal}</button>
+          <button onclick="editName(${index})">${translations[currentLanguage].editName}</button>
+          <button onclick="resetCount(${index})">${translations[currentLanguage].reset}</button>
+          <button class="delete-btn" onclick="deleteMuscleGroup(${index})">${translations[currentLanguage].delete}</button>
+          ${goalReached ? `<div class="goal-reached">${translations[currentLanguage].goalReached}</div>` : ''}
+        `;
+        muscleGroupsContainer.appendChild(muscleGroupElement);
+      });
+    }
+
+    const trainingInfo = {
+      fr: {
+        title: "Conseils d'entraînement",
+        subtitle: "Nombre de séries hebdomadaires recommandées par groupe musculaire :",
+        guidelines: [
+          "5 séries : Pour maintenir la masse musculaire",
+          "8-12 séries : Pour développer le muscle",
+          "15-18 séries : Pour un développement musculaire optimal",
+          "20+ séries : Pour cibler les points faibles ou pour un niveau avancé"
+        ],
+        close: "Fermer"
+      },
+      en: {
+        title: "Training Guidelines",
+        subtitle: "Recommended weekly sets per muscle group:",
+        guidelines: [
+          "5 sets: To maintain muscle mass",
+          "8-12 sets: For muscle development",
+          "15-18 sets: For optimal muscle development",
+          "20+ sets: To target weak points or for advanced level"
+        ],
+        close: "Close"
+      }
+    };
+
+    function showInfo() {
+      const info = trainingInfo[currentLanguage] || trainingInfo.fr;
+      
+      const modal = document.createElement('div');
+      modal.className = 'info-modal';
+      modal.innerHTML = `
+        <h3 style="margin-top: 0; color: var(--primary-color);">${info.title}</h3>
+        <div class="info-content">
+          <p>${info.subtitle}</p>
+          <ul>
+            ${info.guidelines.map(guideline => `<li>${guideline}</li>`).join('')}
+          </ul>
+        </div>
+        <div style="text-align: right;">
+          <button onclick="this.closest('.modal-container').remove()">${info.close}</button>
+        </div>
+      `;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'info-overlay';
+      overlay.onclick = () => container.remove();
+
+      const container = document.createElement('div');
+      container.className = 'modal-container';
+      container.appendChild(overlay);
+      container.appendChild(modal);
+
+      document.body.appendChild(container);
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      document.getElementById(tabName + 'Tab').classList.add('active');
+      document.getElementById(tabName + 'Content').classList.add('active');
+
+      if (tabName === 'stats') {
+        updateWorkoutChart();
+        updateStepsChart();
+        updateChartTitles();
+      } else if (tabName === 'steps') {
+        initStepCounter();
+      } else if (tabName === 'metabolism') {
+        calculateBMR();
+      }
+    }
+
+    function updateChartTitles() {
+        const muscleTitleEl = document.getElementById('muscleProgressTitle');
+        const stepsTitleEl = document.getElementById('stepsProgressTitle');
+        if (muscleTitleEl) muscleTitleEl.textContent = translations[currentLanguage].muscleProgressTitle;
+        if (stepsTitleEl) stepsTitleEl.textContent = translations[currentLanguage].stepsProgressTitle; 
+    }
+
+    function updateWorkoutChart() {
+      const currentWeek = getWeekNumber(new Date());
+
+      weeklyWorkoutStats[`${currentWeek.year}-${currentWeek.week}`] = weeklyWorkoutStats[`${currentWeek.year}-${currentWeek.week}`] || {};
+
+      muscleGroups.forEach(group => {
+        weeklyWorkoutStats[`${currentWeek.year}-${currentWeek.week}`][group.name] = group.count;
+      });
+
+      saveMuscleGroups();
+
+      const labels = Object.keys(weeklyWorkoutStats).sort();
+      const datasets = muscleGroups.map(group => ({
+        label: group.name,
+        data: labels.map(week => weeklyWorkoutStats[week]?.[group.name] || 0), 
+        borderColor: getRandomColor(),
+        fill: false,
+        tension: 0.4
+      }));
+
+      const canvas = document.getElementById('progressChart');
+      const ctx = canvas.getContext('2d');
+
+      if (window.progressChart && typeof window.progressChart.destroy === 'function') {
+        window.progressChart.destroy();
+      }
+
+      window.progressChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels.map(week => {
+            const [year, weekNum] = week.split('-');
+            return `S${weekNum}`; 
+          }),
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true, 
+           scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' },
+              ticks: { color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }
+            },
+            x: {
+              grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' },
+              ticks: { color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' } }
+          }
+        }
+      });
+    }
+
+    function updateStepsChart() {
+        aggregateWeeklySteps(); 
+
+        const dailyLabels = Object.keys(dailySteps).sort();
+        const labels = dailyLabels;
+        const data = labels.map(day => dailySteps[day] || 0);
+        const chartTitle = translations[currentLanguage].stepsProgressTitle; 
+
+        const canvas = document.getElementById('stepsChart');
+        const ctx = canvas.getContext('2d');
+
+        if (window.stepsChart && typeof window.stepsChart.destroy === 'function') {
+            window.stepsChart.destroy();
+        }
+
+        window.stepsChart = new Chart(ctx, {
+            type: 'bar', 
+            data: {
+                labels: labels.map(date => {
+                    const [year, month, day] = date.split('-');
+                    return `${day}/${month}`;
+                }),
+                datasets: [{
+                    label: translations[currentLanguage].steps,
+                    data: data,
+                    backgroundColor: 'rgba(0, 122, 255, 0.6)', 
+                    borderColor: 'rgba(0, 122, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' },
+                        ticks: { color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)' }
+                    },
+                    x: {
+                        grid: { display: false }, 
+                        ticks: {
+                            color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)',
+                            maxRotation: 45, 
+                            minRotation: 45
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false } 
+                }
+            }
+        });
+
+        document.getElementById('stepsProgressTitle').textContent = chartTitle;
+    }
+
+    function aggregateWeeklySteps() {
+        weeklySteps = {}; 
+        for (const dayKey in dailySteps) {
+            const date = new Date(dayKey);
+            const weekData = getWeekNumber(date);
+            const weekKey = `${weekData.year}-${weekData.week}`;
+            if (!weeklySteps[weekKey]) {
+                weeklySteps[weekKey] = 0;
+            }
+            weeklySteps[weekKey] += dailySteps[dayKey];
+        }
+        saveStepsData(); 
+    }
+
+    function getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        return { week: weekNo, year: d.getUTCFullYear() };
+    }
+
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    let stepSensor = null;
+    let lastMotionTimestamp = 0;
+    const stepDebounceTime = 300; 
+
+    async function initStepCounter() {
+        updateStepsDisplay();
+
+        if (stepSensor) {
+            return;
+        }
+
+        try {
+             if ('Accelerometer' in window) {
+                const { state } = await navigator.permissions.query({ name: 'accelerometer' });
+                if (state === 'granted') {
+                    startAccelerometer();
+                } else if (state === 'prompt') {
+                     try {
+                         stepSensor = new Accelerometer({ frequency: 1 }); 
+                         stepSensor.addEventListener('reading', handleMotion);
+                         stepSensor.addEventListener('error', handleSensorError);
+                         stepSensor.start();
+                     } catch (error) {
+                         fallbackToDeviceMotion();
+                     }
+                } else { 
+                     fallbackToDeviceMotion(); 
+                }
+            } else {
+                fallbackToDeviceMotion(); 
+            }
+        } catch (error) {
+            console.error('Error initializing step counter:', error);
+            if (document.getElementById('stepsContent').classList.contains('active')) { 
+               alert(translations[currentLanguage].sensorNotAvailable);
+            }
+            fallbackToDeviceMotion(); 
+        }
+    }
+
+    function fallbackToDeviceMotion() {
+        console.log("Falling back to DeviceMotionEvent");
+        if ('DeviceMotionEvent' in window && typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener('devicemotion', handleMotionLegacy);
+                    } else {
+                         if (document.getElementById('stepsContent').classList.contains('active')) {
+                             alert(translations[currentLanguage].sensorPermissionDenied);
+                         }
+                    }
+                })
+                .catch(error => {
+                     console.error("DeviceMotionEvent permission request error:", error);
+                      if (document.getElementById('stepsContent').classList.contains('active')) {
+                         alert(translations[currentLanguage].sensorNotAvailable);
+                      }
+                });
+        } else if ('DeviceMotionEvent' in window) {
+             window.addEventListener('devicemotion', handleMotionLegacy);
+        } else {
+             if (document.getElementById('stepsContent').classList.contains('active')) {
+                alert(translations[currentLanguage].sensorNotAvailable);
+             }
+        }
+    }
+
+    function startAccelerometer() {
+        try {
+            stepSensor = new Accelerometer({ frequency: 1 }); 
+             stepSensor.addEventListener('reading', handleMotion);
+             stepSensor.addEventListener('error', handleSensorError);
+             stepSensor.start();
+             setupDailyReset(); 
+        } catch (error) {
+             console.error("Failed to start Accelerometer:", error);
+             if (document.getElementById('stepsContent').classList.contains('active')) {
+                 alert(translations[currentLanguage].sensorNotAvailable + " Error: " + error.message);
+             }
+             fallbackToDeviceMotion(); 
+        }
+    }
+
+    function handleSensorError(event) {
+        console.error('Sensor Error:', event.error.name, event.error.message);
+         if (document.getElementById('stepsContent').classList.contains('active')) {
+            alert(translations[currentLanguage].sensorNotAvailable + ` (${event.error.name})`);
+         }
+        if (stepSensor) {
+             stepSensor.stop();
+             stepSensor = null;
+        }
+    }
+
+    function handleMotion(event) {
+        let x, y, z;
+         if (event.accelerationIncludingGravity) { 
+             x = event.accelerationIncludingGravity.x;
+             y = event.accelerationIncludingGravity.y;
+             z = event.accelerationIncludingGravity.z;
+         } else if (stepSensor && stepSensor.x !== null) { 
+             x = stepSensor.x;
+             y = stepSensor.y;
+             z = stepSensor.z;
+         } else {
+             return; 
+         }
+
+        if (x === null || y === null || z === null) return; 
+
+        const magnitude = Math.sqrt(x * x + y * y + z * z);
+        const threshold = 11; 
+        const now = Date.now();
+
+        if (magnitude > threshold && (now - lastMotionTimestamp > stepDebounceTime)) {
+             lastMotionTimestamp = now;
+             incrementStepCount();
+         }
+    }
+
+    function handleMotionLegacy(event) {
+         handleMotion(event); 
+    }
+
+    function incrementStepCount() {
+        const today = new Date().toISOString().split('T')[0];
+        if (today !== currentDayKey) {
+            if (dailySteps[currentDayKey] !== undefined) {
+                 saveStepsData(); 
+            }
+            stepsCount = 1; 
+            currentDayKey = today;
+            dailySteps[currentDayKey] = stepsCount;
+        } else {
+             stepsCount++;
+             dailySteps[currentDayKey] = stepsCount;
+        }
+
+        updateStepsDisplay();
+        saveStepsData(); 
+
+        if (document.getElementById('statsContent').classList.contains('active')) {
+             updateStepsChart();
+        }
+    }
+
+    function setupDailyReset() {
+         const now = new Date();
+         const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+         const timeUntilMidnight = tomorrow - now;
+
+         setTimeout(() => {
+             dailySteps[currentDayKey] = stepsCount;
+             aggregateWeeklySteps(); 
+             saveStepsData();
+
+             stepsCount = 0;
+             currentDayKey = new Date().toISOString().split('T')[0];
+             dailySteps[currentDayKey] = 0; 
+             saveStepsData();
+             updateStepsDisplay(); 
+
+             setInterval(() => {
+                 dailySteps[currentDayKey] = stepsCount; 
+                 aggregateWeeklySteps();
+                 saveStepsData();
+
+                 stepsCount = 0;
+                 currentDayKey = new Date().toISOString().split('T')[0];
+                 dailySteps[currentDayKey] = 0;
+                 saveStepsData();
+                 updateStepsDisplay();
+             }, 24 * 60 * 60 * 1000);
+         }, timeUntilMidnight);
+    }
+
+    function updateStepsDisplay() {
+      const stepsNumberEl = document.getElementById('stepsNumber');
+      const stepsLabelEl = document.getElementById('stepsLabel');
+      const stepsRingEl = document.querySelector('.steps-ring-progress');
+      const stepsGoalLabelEl = document.getElementById('stepsGoalLabel');
+      const stepsGoalInputEl = document.getElementById('stepsGoalInput');
+
+      if (stepsNumberEl) stepsNumberEl.textContent = stepsCount.toLocaleString();
+      if (stepsLabelEl) stepsLabelEl.textContent = translations[currentLanguage].steps;
+      if (stepsGoalLabelEl) stepsGoalLabelEl.textContent = translations[currentLanguage].stepsGoal;
+      if (stepsGoalInputEl) stepsGoalInputEl.value = stepsGoal;
+
+      if (stepsRingEl) {
+          const progress = stepsGoal > 0 ? Math.min(stepsCount / stepsGoal, 1) : 0;
+          const circumference = 2 * Math.PI * 45; 
+          stepsRingEl.style.strokeDashoffset = circumference * (1 - progress);
+      }
+    }
+
+    function updateStepsGoal() {
+      const goalInput = document.getElementById('stepsGoalInput');
+      const newGoal = parseInt(goalInput.value);
+      if (!isNaN(newGoal) && newGoal >= 1) { 
+        stepsGoal = newGoal;
+        saveStepsData(); 
+        updateStepsDisplay(); 
+
+        if (document.getElementById('statsContent').classList.contains('active')) {
+             updateStepsChart();
+        }
+      } else {
+          goalInput.value = stepsGoal; 
+      }
+    }
+
+    function calculateBMR() {
+        const weight = parseInt(document.getElementById('weight').value);
+        const height = parseInt(document.getElementById('height').value);
+        const age = parseInt(document.getElementById('age').value);
+        const gender = document.getElementById('gender').value;
+
+        if (weight && height && age && gender) {
+            let bmr;
+            if (gender === 'male') {
+                bmr = 66 + (13.7 * weight) + (5 * height) - (6.8 * age);
+            } else {
+                bmr = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
+            }
+
+            calculatedBMR = bmr;
+            document.getElementById('bmrResult').style.display = 'block';
+            document.getElementById('bmrResult').innerHTML = translations[currentLanguage].bmrResultText.replace('{0}', Math.round(bmr));
+            document.getElementById('tdeeSection').style.display = 'block';
+        }
+    }
+
+    function calculateTDEE() {
+        const activityLevel = parseFloat(document.getElementById('activityLevel').value);
+        const goal = selectedGoal;
+
+        if (calculatedBMR && activityLevel) {
+            let tdee;
+            if (goal === 'lose') {
+                tdee = calculatedBMR * activityLevel - 500;
+            } else if (goal === 'maintain') {
+                tdee = calculatedBMR * activityLevel;
+            } else {
+                tdee = calculatedBMR * activityLevel + 500;
+            }
+
+            document.getElementById('tdeeResult').style.display = 'block';
+            document.getElementById('tdeeResult').innerHTML = translations[currentLanguage].tdeeResultText.replace('{0}', Math.round(tdee));
+        }
+    }
+
+    function selectGoal(button) {
+        const goal = button.dataset.goal;
+        selectedGoal = goal;
+        document.querySelectorAll('.goal-options button').forEach(b => b.classList.remove('selected'));
+        button.classList.add('selected');
+    }
+
+    function loadData() { 
+      const savedMuscleGroups = localStorage.getItem('muscleGroups');
+      if (savedMuscleGroups) {
+        muscleGroups = JSON.parse(savedMuscleGroups);
+      }
+      lastResetDate = localStorage.getItem('lastResetDate') || new Date().toISOString().split('T')[0];
+      autoResetEnabled = localStorage.getItem('autoResetEnabled') === 'true';
+      document.getElementById('autoResetToggle').checked = autoResetEnabled;
+
+      currentLanguage = localStorage.getItem('language') || 'fr';
+      document.getElementById('languageSelect').value = currentLanguage;
+
+      isDarkMode = localStorage.getItem('darkMode') === 'true';
+      document.getElementById('themeToggle').checked = isDarkMode;
+      document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+
+      const savedWorkoutStats = localStorage.getItem('weeklyWorkoutStats');
+      if (savedWorkoutStats) {
+        weeklyWorkoutStats = JSON.parse(savedWorkoutStats);
+      }
+
+      stepsCount = parseInt(localStorage.getItem('stepsCount') || '0');
+      stepsGoal = parseInt(localStorage.getItem('stepsGoal') || '10000');
+      const savedDailySteps = localStorage.getItem('dailySteps');
+       if (savedDailySteps) {
+         dailySteps = JSON.parse(savedDailySteps);
+       }
+       const savedWeeklySteps = localStorage.getItem('weeklySteps');
+        if (savedWeeklySteps) {
+         weeklySteps = JSON.parse(savedWeeklySteps);
+        }
+
+       currentDayKey = new Date().toISOString().split('T')[0]; 
+       if (!dailySteps[currentDayKey]) {
+           dailySteps[currentDayKey] = stepsCount;
+       } else {
+           stepsCount = dailySteps[currentDayKey];
+       }
+       saveStepsData(); 
+    }
+
+    // Initial load and render
+    loadData(); 
+    updateUILanguage(); 
+    renderMuscleGroups(); 
+    updateStepsDisplay(); 
+    checkAutoReset(); 
+    setupDailyReset(); 
+
+    setInterval(checkAutoReset, 60 * 60 * 1000);
+
+    setTimeout(initStepCounter, 500);
+  </script>
+</body>
+</html>
